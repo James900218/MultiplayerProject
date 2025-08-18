@@ -25,6 +25,12 @@ AMPProjectile::AMPProjectile()
 	sphereComponent->SetCollisionProfileName(TEXT("BlockAllDynamic"));
 	RootComponent = sphereComponent;
 
+	// Registering the Projectile Impact function on a Hit event.
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		sphereComponent->OnComponentHit.AddDynamic(this, &AMPProjectile::OnProjectileImpact);
+	}
+
 	// defining static mesh
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultMesh(TEXT("/Game/StarterContent/Shapes/Shape_Sphere.Shape_Sphere"));
 	staticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
@@ -62,6 +68,23 @@ void AMPProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void AMPProjectile::Destroyed()
+{
+	// when the actor is destroyed, grab location and spawn emmiter effect, auto destroy.
+	FVector spawnLocation = GetActorLocation();
+	UGameplayStatics::SpawnEmitterAtLocation(this, particleEffect, spawnLocation, FRotator::ZeroRotator, true, EPSCPoolMethod::AutoRelease);
+}
+
+void AMPProjectile::OnProjectileImpact(UPrimitiveComponent* hitComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, FVector normalImpulse, const FHitResult& _hit)
+{
+	if (otherActor)
+	{
+		UGameplayStatics::ApplyPointDamage(otherActor, damageValue, normalImpulse, _hit, GetInstigator()->Controller, this, damageType);
+	}
+
+	Destroy();
 }
 
 // Called every frame

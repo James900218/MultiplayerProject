@@ -19,6 +19,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void Destroyed() override;
+
+	UFUNCTION(Category = "Projectile")
+	void OnProjectileImpact(UPrimitiveComponent* hitComponent, AActor* otherActor, UPrimitiveComponent* otherComponent, FVector normalImpulse, const FHitResult& _hit);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
