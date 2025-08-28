@@ -28,7 +28,7 @@ AMPProjectile::AMPProjectile()
 	// Registering the Projectile Impact function on a Hit event.
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		sphereComponent->OnComponentHit.AddDynamic(this, &AMPProjectile::OnProjectileImpact);
+		sphereComponent->OnComponentHit.__Internal_AddDynamic(this, &AMPProjectile::OnProjectileImpact, UE::Delegates::Private::GetTrimmedMemberFunctionName(L"&AMPProjectile::OnProjectileImpact"));
 	}
 
 	// defining static mesh

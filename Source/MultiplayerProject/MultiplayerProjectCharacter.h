@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
+#include "MPProjectile.h"
 #include "MultiplayerProjectCharacter.generated.h"
 
 class USpringArmComponent;
@@ -125,6 +126,28 @@ protected:
 
 	void OnHealthUpdate();
 
+
+	// shooting functions
+
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay|Projectile")
+	TSubclassOf<class AMPProjectile> projectileClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
+	float fireRate;
+
+	bool bisFiringWeapon;
+
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	void StartFire();
+
+	UFUNCTION(BlueprintCallable, Category = "Gameplay")
+	void StopFire();
+
+	UFUNCTION(Server, Reliable)
+	void HandleFire();
+
+	/** A timer handle used for providing the fire rate delay in-between spawns.*/
+	FTimerHandle firingTimer;
 
 };
 
