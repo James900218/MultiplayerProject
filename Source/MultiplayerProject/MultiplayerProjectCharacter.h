@@ -103,14 +103,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	float TakeDamage(float _DamageTaken, struct FDamageEvent const& _damageEvent, AController* _eventInstigator, AActor* _damageCauser) override;
 
-public:
-
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-
 protected:
 
 	// Health properties
