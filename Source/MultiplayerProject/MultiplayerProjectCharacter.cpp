@@ -170,7 +170,7 @@ void AMultiplayerProjectCharacter::OnHealthUpdate()
 		FString healthMessage = FString::Printf(TEXT("You have %f health remaining"), currentHealth);
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
 
-		if (currentHealth > 0)
+		if (currentHealth <= 0)
 		{
 			FString deathMessage = FString::Printf(TEXT("You have died"));
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, deathMessage);
@@ -182,7 +182,7 @@ void AMultiplayerProjectCharacter::OnHealthUpdate()
 	if (GetLocalRole() == ROLE_Authority)
 	{
 		FString healthMessage = FString::Printf(TEXT("%s has %f health remaining"), *GetFName().ToString(), currentHealth);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
+		GEngine->AddOnScreenDebugMessage(-2, 5.f, FColor::Blue, healthMessage);
 	}
 }
 
@@ -204,13 +204,19 @@ void AMultiplayerProjectCharacter::StopFire()
 
 void AMultiplayerProjectCharacter::HandleFire_Implementation()
 {
-	FVector spawnLocation = GetActorLocation() + (GetActorRotation().Vector() * 100.0f) + (GetActorUpVector() * 50.0f);
-	FRotator spawnRotation = GetActorRotation();
+	// projectile functionality will likely be swithced to line trace instead of spawning projectile actor
+	// handle this, keep the class here as it can be used to eventually house some other functionality
 
-	FActorSpawnParameters spawnParams;
-	spawnParams.Instigator = GetInstigator();
-	spawnParams.Owner = this;
+	/*
+			FVector spawnLocation = GetActorLocation() + (GetActorRotation().Vector() * 100.0f) + (GetActorUpVector() * 50.0f);
+		FRotator spawnRotation = GetActorRotation();
 
-	AMPProjectile* spawnedProjectile = GetWorld()->SpawnActor<AMPProjectile>(spawnLocation, spawnRotation, spawnParams);
+		FActorSpawnParameters spawnParams;
+		spawnParams.Instigator = GetInstigator();
+		spawnParams.Owner = this;
+
+		AMPProjectile* spawnedProjectile = GetWorld()->SpawnActor<AMPProjectile>(spawnLocation, spawnRotation, spawnParams);
+	*/
+
 
 }

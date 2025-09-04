@@ -102,7 +102,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Health")
 	float maxHealth;
 
-	UPROPERTY(ReplicatedUsing = OnRep_CurrentHealth)
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentHealth, BlueprintReadWrite, Category = "Health")
 	float currentHealth;
 
 	UFUNCTION()
