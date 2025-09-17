@@ -25,46 +25,14 @@ UCLASS(abstract)
 class AMultiplayerProjectCharacter : public ACharacter
 {
 	GENERATED_BODY()
-	
-protected:
-
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
-	UInputAction* JumpAction;
-
-	/** Move Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
-	UInputAction* MoveAction;
-
-	/** Look Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
-	UInputAction* LookAction;
-
-	/** Mouse Look Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
-	UInputAction* MouseLookAction;
 
 public:
-
 	/** Constructor */
 	AMultiplayerProjectCharacter();	
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-protected:
-
-	/** Initialize input action bindings */
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-protected:
-
-	/** Called for movement input */
-	void Move(const FInputActionValue& Value);
-
-	/** Called for looking input */
-	void Look(const FInputActionValue& Value);
-
-public:
+	// Move Components
 
 	/** Handles move inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
@@ -82,6 +50,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
 
+
 	// Health Components
 	UFUNCTION(BlueprintPure, Category = "Health")
 	FORCEINLINE float GetMaxHealth() const { return maxHealth; }
@@ -93,9 +62,35 @@ public:
 	void SetCurrentHealth(float _healthValue);
 
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	float TakeDamage(float _DamageTaken, struct FDamageEvent const& _damageEvent, AController* _eventInstigator, AActor* _damageCauser) override;
+	float TakeDamage(float _DamageTaken, FDamageEvent const& _damageEvent, AController* _eventInstigator, AActor* _damageCauser);
 
 protected:
+
+	// Movement Actions
+	/** Jump Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
+	UInputAction* JumpAction;
+
+	/** Move Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
+	UInputAction* MoveAction;
+
+	/** Look Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
+	UInputAction* LookAction;
+
+	/** Mouse Look Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Input")
+	UInputAction* MouseLookAction;
+
+	/** Initialize input action bindings */
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	/** Called for movement input */
+	void Move(const FInputActionValue& Value);
+
+	/** Called for looking input */
+	void Look(const FInputActionValue& Value);
 
 	// Health properties
 
@@ -110,28 +105,12 @@ protected:
 
 	void OnHealthUpdate();
 
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTakeDamage);
 
-	// shooting functions
+	UFUNCTION(BlueprintCallable, Category = "Events")
+	virtual void AfterDamageActions();
 
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay|Projectile")
-	TSubclassOf<class AMPProjectile> projectileClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
-	float fireRate;
-
-	bool bisFiringWeapon;
-
-	UFUNCTION(BlueprintCallable, Category = "Gameplay")
-	void StartFire();
-
-	UFUNCTION(BlueprintCallable, Category = "Gameplay")
-	void StopFire();
-
-	UFUNCTION(Server, Reliable)
-	void HandleFire();
-
-	/** A timer handle used for providing the fire rate delay in-between spawns.*/
-	FTimerHandle firingTimer;
-	
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnTakeDamage OnDamageTaken;
 };
 

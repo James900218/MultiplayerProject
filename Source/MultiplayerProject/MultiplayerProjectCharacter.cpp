@@ -44,10 +44,7 @@ AMultiplayerProjectCharacter::AMultiplayerProjectCharacter()
 	currentHealth = maxHealth;
 	
 	// initialise projectile class
-	projectileClass = AMPProjectile::StaticClass();
 
-	fireRate = 0.25f;
-	bisFiringWeapon = false;
 }
 
 void AMultiplayerProjectCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -78,7 +75,6 @@ void AMultiplayerProjectCharacter::SetupPlayerInputComponent(UInputComponent* Pl
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
 
-	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AMultiplayerProjectCharacter::StartFire);
 }
 
 void AMultiplayerProjectCharacter::Move(const FInputActionValue& Value)
@@ -154,6 +150,7 @@ float AMultiplayerProjectCharacter::TakeDamage(float _DamageTaken, FDamageEvent 
 {
 	float damageApplied = currentHealth - _DamageTaken;
 	SetCurrentHealth(damageApplied);
+	AfterDamageActions();
 	return damageApplied;
 }
 
@@ -186,37 +183,7 @@ void AMultiplayerProjectCharacter::OnHealthUpdate()
 	}
 }
 
-void AMultiplayerProjectCharacter::StartFire()
+void AMultiplayerProjectCharacter::AfterDamageActions()
 {
-	if (!bisFiringWeapon)
-	{
-		bisFiringWeapon = true;
-		UWorld* world = GetWorld();
-		world->GetTimerManager().SetTimer(firingTimer, this, &AMultiplayerProjectCharacter::StopFire, fireRate, false);
-		HandleFire();
-	}
-}
-
-void AMultiplayerProjectCharacter::StopFire()
-{
-	bisFiringWeapon = false;
-}
-
-void AMultiplayerProjectCharacter::HandleFire_Implementation()
-{
-	// projectile functionality will likely be swithced to line trace instead of spawning projectile actor
-	// handle this, keep the class here as it can be used to eventually house some other functionality
-
-	/*
-			FVector spawnLocation = GetActorLocation() + (GetActorRotation().Vector() * 100.0f) + (GetActorUpVector() * 50.0f);
-		FRotator spawnRotation = GetActorRotation();
-
-		FActorSpawnParameters spawnParams;
-		spawnParams.Instigator = GetInstigator();
-		spawnParams.Owner = this;
-
-		AMPProjectile* spawnedProjectile = GetWorld()->SpawnActor<AMPProjectile>(spawnLocation, spawnRotation, spawnParams);
-	*/
-
-
+	OnDamageTaken.Broadcast();
 }
