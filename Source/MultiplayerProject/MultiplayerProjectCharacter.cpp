@@ -146,11 +146,14 @@ void AMultiplayerProjectCharacter::SetCurrentHealth(float _healthValue)
 	}
 }
 
-float AMultiplayerProjectCharacter::TakeDamage(float _DamageTaken, FDamageEvent const& _damageEvent, AController* _eventInstigator, AActor* _damageCauser)
+float AMultiplayerProjectCharacter::TakeDamage(float _DamageTaken, FDamageEvent const& _damageEvent, AController* _eventInstigator, AActor* _damageCauser, AActor*& _damageCauserOutput)
 {
 	float damageApplied = currentHealth - _DamageTaken;
 	SetCurrentHealth(damageApplied);
 	AfterDamageActions();
+
+	_damageCauserOutput = _damageCauser;
+
 	return damageApplied;
 }
 

@@ -62,7 +62,7 @@ public:
 	void SetCurrentHealth(float _healthValue);
 
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	float TakeDamage(float _DamageTaken, FDamageEvent const& _damageEvent, AController* _eventInstigator, AActor* _damageCauser);
+	float TakeDamage(float _DamageTaken, FDamageEvent const& _damageEvent, AController* _eventInstigator, AActor* _damageCauser, AActor*& _damageCauserOutput);
 
 protected:
 
